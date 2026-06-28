@@ -1,5 +1,5 @@
-"""
-Sensor data simulator — Sprint 2
+﻿"""
+Sensor data simulator | Sprint 2
 Uses the same SimuladorSensorIoT logic from Sprint 1 (Gaussian noise + anomaly injection).
 """
 import random
@@ -126,3 +126,4 @@ def executar_ciclo_coleta() -> list[dict]:
         iniciado_em=inicio
     )
     return resultados
+

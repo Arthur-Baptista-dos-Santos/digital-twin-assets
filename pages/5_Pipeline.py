@@ -1,4 +1,4 @@
-import streamlit as st
+﻿import streamlit as st
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import database as db
@@ -7,7 +7,7 @@ from rpa.nameplate_pipeline import (
 )
 
 st.set_page_config(page_title="Pipeline de Dados", page_icon="🔗", layout="wide")
-st.title("Pipeline de Dados — Placa do Motor -> Cadastro Digital")
+st.title("Pipeline de Dados | Placa do Motor -> Cadastro Digital")
 st.divider()
 
 # Diagrama do pipeline
@@ -155,3 +155,4 @@ with tab_sim:
 | Prot.: {str(dados.get('ip_rating','IP55')):<26} |
 +----------------------------------+
 """, language="text")
+

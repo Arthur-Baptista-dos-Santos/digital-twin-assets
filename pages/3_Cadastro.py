@@ -1,4 +1,4 @@
-import streamlit as st
+﻿import streamlit as st
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import database as db
@@ -88,7 +88,7 @@ with tab_editar:
     st.subheader("Editar Ativo Existente")
     ativos = db.get_ativos()
     ativo_e = st.selectbox("Selecionar", ativos,
-                           format_func=lambda a: f"{a['codigo']} — {a['descricao']}")
+                           format_func=lambda a: f"{a['codigo']} | {a['descricao']}")
     if ativo_e:
         a = ativo_e
         col1, col2 = st.columns(2)
@@ -122,3 +122,4 @@ with tab_editar:
                             localizacao_descricao=loc_e)
             st.success(f"Ativo `{a['codigo']}` atualizado!")
             st.rerun()
+

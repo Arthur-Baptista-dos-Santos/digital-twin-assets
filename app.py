@@ -1,11 +1,11 @@
-import streamlit as st
+﻿import streamlit as st
 import sys, os
 sys.path.insert(0, os.path.dirname(__file__))
 
 import database as db
 
 st.set_page_config(
-    page_title="Digital Twin — Planta Industrial",
+    page_title="Digital Twin | Planta Industrial",
     page_icon="🏭",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -55,7 +55,7 @@ with st.sidebar:
     st.metric("Operacionais", sum(1 for a in ativos if a["status"] == "ativo"))
 
 # ── Home ───────────────────────────────────────────────────────────────────────
-st.title("Digital Twin — Visualizacao Operacional")
+st.title("Digital Twin | Visualizacao Operacional")
 st.markdown("**Sprint 2** | Continuacao da Sprint 1 (coleta/registro) com navegacao, dashboards e automacao RPA.")
 st.divider()
 
@@ -124,3 +124,4 @@ with st.expander("Continuidade com Sprint 1"):
 - RPA de associacao TAG/Localizacao (escreve em `log_execucoes`)
 - Pipeline Placa -> OCR -> Cadastro
     """)
+

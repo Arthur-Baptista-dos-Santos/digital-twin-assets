@@ -1,4 +1,4 @@
-import streamlit as st
+﻿import streamlit as st
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import database as db
@@ -137,7 +137,7 @@ with tab_coleta:
 
 # ── TAB 4: Execution Log ───────────────────────────────────────────────────────
 with tab_logs:
-    st.subheader("Log de Execucoes (log_execucoes — Sprint 1)")
+    st.subheader("Log de Execucoes (log_execucoes | Sprint 1)")
     logs = db.get_log_execucoes(limit=100)
     if logs:
         df_l = pd.DataFrame(logs)[["iniciado_em","automacao","status",
@@ -166,7 +166,7 @@ with tab_logs:
 
 # ── TAB 5: Audit history ───────────────────────────────────────────────────────
 with tab_auditoria:
-    st.subheader("Historico de Auditoria (historico_atualizacoes — Sprint 1)")
+    st.subheader("Historico de Auditoria (historico_atualizacoes | Sprint 1)")
     st.info("Cada INSERT/UPDATE em ativos gera um registro com estado antes/depois em JSON.")
     hist = db.get_historico_atualizacoes(limit=50)
     if hist:
@@ -187,3 +187,4 @@ with tab_auditoria:
                 st.divider()
     else:
         st.info("Sem registros de auditoria.")
+

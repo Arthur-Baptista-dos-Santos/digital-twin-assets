@@ -1,4 +1,4 @@
-import streamlit as st
+﻿import streamlit as st
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import database as db
@@ -8,7 +8,7 @@ import pandas as pd
 import time
 
 st.set_page_config(page_title="Dashboard do Ativo", page_icon="📊", layout="wide")
-st.title("Dashboard Operacional — Sensores em Tempo Real")
+st.title("Dashboard Operacional | Sensores em Tempo Real")
 st.divider()
 
 ativos = db.get_ativos()
@@ -32,11 +32,11 @@ st.session_state["ativo_codigo_sel"] = codigo_sel
 
 # Header
 cor = {"ativo": "🟢", "manutencao": "🟡", "inativo": "🔴"}
-localizacao = ativo.get("localizacao_descricao") or ativo.get("localizacao") or "—"
+localizacao = ativo.get("localizacao_descricao") or ativo.get("localizacao") or "|"
 st.markdown(
     f"### {cor.get(ativo['status'],'⚪')} `{ativo['codigo']}` | TAG: `{ativo.get('tag') or 'N/D'}`  \n"
     f"{ativo['descricao']} | {localizacao}  \n"
-    f"**Planta:** {ativo.get('planta_nome') or '—'} / {ativo.get('area_nome') or '—'}"
+    f"**Planta:** {ativo.get('planta_nome') or '|'} / {ativo.get('area_nome') or '|'}"
 )
 st.divider()
 
@@ -140,3 +140,4 @@ if auto:
     st.info(f"Atualizando a cada {intervalo} segundos...")
     time.sleep(intervalo)
     st.rerun()
+
