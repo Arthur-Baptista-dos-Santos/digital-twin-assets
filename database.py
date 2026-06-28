@@ -1,4 +1,4 @@
-"""
+﻿"""
 Database layer — Sprint 2
 Extends the Sprint 1 motores.db schema with plantas, areas, and TAG/location
 columns on ativos. All Sprint 1 field names are preserved exactly.
@@ -10,7 +10,7 @@ import hashlib
 from contextlib import contextmanager
 from datetime import datetime
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "data", "motores.db")
+DB_PATH = "/tmp/digital_twin_motores.db"
 
 
 @contextmanager
@@ -256,3 +256,4 @@ def get_historico_atualizacoes(limit=30):
             "SELECT * FROM historico_atualizacoes ORDER BY id DESC LIMIT ?", (limit,)
         ).fetchall()
     return [dict(r) for r in rows]
+
