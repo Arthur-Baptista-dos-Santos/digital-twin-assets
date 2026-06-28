@@ -30,6 +30,34 @@ def get_conn():
         conn.close()
 
 
+# ── Sprint 1 base schema (recreated when DB is fresh, e.g. /tmp on cloud) ────
+
+SCHEMA_SPRINT1 = """
+CREATE TABLE IF NOT EXISTS ativos (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    codigo          TEXT NOT NULL UNIQUE,
+    descricao       TEXT,
+    fabricante      TEXT,
+    potencia_kw     REAL,
+    corrente_nom    REAL,
+    tensao_v        REAL,
+    ip_rating       TEXT,
+    status          TEXT DEFAULT 'ativo',
+    criado_em       TEXT DEFAULT (datetime('now','localtime')),
+    atualizado_em   TEXT DEFAULT (datetime('now','localtime'))
+);
+
+CREATE TABLE IF NOT EXISTS log_execucoes (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    operacao    TEXT,
+    resultado   TEXT,
+    sucessos    INTEGER DEFAULT 0,
+    falhas      INTEGER DEFAULT 0,
+    detalhes    TEXT,
+    executado_em TEXT DEFAULT (datetime('now','localtime'))
+);
+"""
+
 # ── Sprint 2 schema extensions ────────────────────────────────────────────────
 
 SCHEMA_SPRINT2 = """
@@ -62,15 +90,19 @@ SPRINT2_COLUMNS = [
 
 
 def init_db():
-    """Initialize Sprint 2 extensions on top of the Sprint 1 database."""
+    """Initialize Sprint 1 base + Sprint 2 extensions."""
     with get_conn() as conn:
+        conn.executescript(SCHEMA_SPRINT1)
         conn.executescript(SCHEMA_SPRINT2)
 
         # Add columns to ativos if they don't exist yet
         existing = {r[1] for r in conn.execute("PRAGMA table_info(ativos)").fetchall()}
         for table, col, dtype in SPRINT2_COLUMNS:
             if col not in existing:
-                conn.execute(f"ALTER TABLE {table} ADD COLUMN {col} {dtype}")
+                try:
+                    conn.execute(f"ALTER TABLE {table} ADD COLUMN {col} {dtype}")
+                except Exception:
+                    pass
 
         # Seed hierarchy if empty
         if conn.execute("SELECT COUNT(*) FROM plantas").fetchone()[0] == 0:
