@@ -87,11 +87,17 @@ with tab_mapa:
 
     import pandas as pd
     ativos = db.get_ativos()
-    df_map = pd.DataFrame(ativos)[[
-        "codigo","tag","descricao","planta_nome","area_nome",
-        "localizacao_descricao","latitude","longitude",
-        "fabricante","corrente_nom","ip_rating","status","atualizado_em"
-    ]].rename(columns={
+    COLS = ["codigo","tag","descricao","planta_nome","area_nome",
+            "localizacao_descricao","latitude","longitude",
+            "fabricante","corrente_nom","ip_rating","status","atualizado_em"]
+    if not ativos:
+        df_raw = pd.DataFrame(columns=COLS)
+    else:
+        df_raw = pd.DataFrame(ativos)
+        for c in COLS:
+            if c not in df_raw.columns:
+                df_raw[c] = None
+    df_map = df_raw[COLS].rename(columns={
         "codigo":"Codigo","tag":"TAG","descricao":"Descricao",
         "planta_nome":"Planta","area_nome":"Area",
         "localizacao_descricao":"Localizacao","latitude":"Lat","longitude":"Lon",

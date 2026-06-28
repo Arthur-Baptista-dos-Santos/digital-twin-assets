@@ -15,11 +15,14 @@ with tab_lista:
     st.subheader("Ativos Cadastrados")
     ativos = db.get_ativos()
     if ativos:
-        df = pd.DataFrame(ativos)[[
-            "codigo", "tag", "descricao", "planta_nome", "area_nome", "status",
-            "fabricante", "potencia_kw", "tensao_v", "corrente_nom",
-            "ip_rating", "data_install", "atualizado_em"
-        ]].rename(columns={
+        _cols = ["codigo", "tag", "descricao", "planta_nome", "area_nome", "status",
+                 "fabricante", "potencia_kw", "tensao_v", "corrente_nom",
+                 "ip_rating", "data_install", "atualizado_em"]
+        df_raw = pd.DataFrame(ativos)
+        for c in _cols:
+            if c not in df_raw.columns:
+                df_raw[c] = None
+        df = df_raw[_cols].rename(columns={
             "codigo": "Codigo", "tag": "TAG", "descricao": "Descricao",
             "planta_nome": "Planta", "area_nome": "Area", "status": "Status",
             "fabricante": "Fabricante", "potencia_kw": "Pot.(kW)",

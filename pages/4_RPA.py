@@ -83,11 +83,18 @@ with tab_status:
             r = atualizar_status_ativo(ativo_st["codigo"], novo_st)
             (st.success if r["status"] == "Sucesso" else st.error)(r["mensagem"])
     with col2:
-        df_st = pd.DataFrame(ativos)[["codigo","tag","descricao","status"]]
-        df_st.columns = ["Codigo","TAG","Descricao","Status"]
-        icones_st = {"ativo": "🟢 ativo", "manutencao": "🟡 manutencao", "inativo": "🔴 inativo"}
-        df_st["Status"] = df_st["Status"].map(lambda v: icones_st.get(v, v))
-        st.dataframe(df_st, use_container_width=True, hide_index=True)
+        if ativos:
+            df_st = pd.DataFrame(ativos)
+            for c in ["codigo","tag","descricao","status"]:
+                if c not in df_st.columns:
+                    df_st[c] = None
+            df_st = df_st[["codigo","tag","descricao","status"]]
+            df_st.columns = ["Codigo","TAG","Descricao","Status"]
+            icones_st = {"ativo": "🟢 ativo", "manutencao": "🟡 manutencao", "inativo": "🔴 inativo"}
+            df_st["Status"] = df_st["Status"].map(lambda v: icones_st.get(v, v))
+            st.dataframe(df_st, use_container_width=True, hide_index=True)
+        else:
+            st.info("Nenhum ativo cadastrado ainda.")
 
 # ── TAB 3: Collection ─────────────────────────────────────────────────────────
 with tab_coleta:
