@@ -58,14 +58,16 @@ CREATE TABLE IF NOT EXISTS log_execucoes (
 );
 
 CREATE TABLE IF NOT EXISTS leituras (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    ativo_id    INTEGER REFERENCES ativos(id),
-    temperatura REAL,
-    vibration   REAL,
-    corrente    REAL,
-    tensao      REAL,
-    rpm         REAL,
-    coletado_em TEXT DEFAULT (datetime('now','localtime'))
+    id             INTEGER PRIMARY KEY AUTOINCREMENT,
+    ativo_id       INTEGER REFERENCES ativos(id),
+    temperatura_c  REAL,
+    corrente_a     REAL,
+    tensao_v       REAL,
+    rpm            REAL,
+    vibracao_mm_s  REAL,
+    fator_potencia REAL,
+    flag_anomalia  INTEGER DEFAULT 0,
+    coletado_em    TEXT DEFAULT (datetime('now','localtime'))
 );
 
 CREATE TABLE IF NOT EXISTS historico_atualizacoes (
@@ -179,17 +181,22 @@ def _seed_leituras_demo(conn):
     now = dt.datetime.now()
     for ativo in ativos:
         aid = ativo[0]
-        for h in range(24, 0, -1):
+        for h in range(48, 0, -1):
             ts = (now - dt.timedelta(hours=h)).strftime("%Y-%m-%d %H:%M:%S")
+            temp = round(random.uniform(48, 78), 1)
+            vib  = round(random.uniform(0.5, 4.2), 2)
             conn.execute(
-                """INSERT INTO leituras (ativo_id, temperatura, vibration, corrente, tensao, rpm, coletado_em)
-                   VALUES (?,?,?,?,?,?,?)""",
-                (aid,
-                 round(random.uniform(45, 75), 1),
-                 round(random.uniform(0.5, 3.5), 2),
+                """INSERT INTO leituras
+                   (ativo_id, temperatura_c, corrente_a, tensao_v, rpm,
+                    vibracao_mm_s, fator_potencia, flag_anomalia, coletado_em)
+                   VALUES (?,?,?,?,?,?,?,?,?)""",
+                (aid, temp,
                  round(random.uniform(20, 35), 1),
-                 round(random.uniform(370, 390), 1),
+                 round(random.uniform(370, 392), 1),
                  round(random.uniform(1700, 1780), 0),
+                 vib,
+                 round(random.uniform(0.82, 0.97), 2),
+                 1 if temp > 75 or vib > 4.0 else 0,
                  ts)
             )
 
