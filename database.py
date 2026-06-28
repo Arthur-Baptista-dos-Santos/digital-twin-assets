@@ -56,6 +56,16 @@ CREATE TABLE IF NOT EXISTS log_execucoes (
     detalhes    TEXT,
     executado_em TEXT DEFAULT (datetime('now','localtime'))
 );
+
+CREATE TABLE IF NOT EXISTS historico_atualizacoes (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    codigo      TEXT,
+    campo       TEXT,
+    valor_ant   TEXT,
+    valor_novo  TEXT,
+    operador    TEXT DEFAULT 'sistema',
+    atualizado_em TEXT DEFAULT (datetime('now','localtime'))
+);
 """
 
 # ── Sprint 2 schema extensions ────────────────────────────────────────────────
@@ -108,6 +118,10 @@ def init_db():
         if conn.execute("SELECT COUNT(*) FROM plantas").fetchone()[0] == 0:
             _seed_hierarchy(conn)
 
+        # Seed demo ativos if empty
+        if conn.execute("SELECT COUNT(*) FROM ativos").fetchone()[0] == 0:
+            _seed_ativos_demo(conn)
+
         # Auto-assign TAGs to existing Sprint 1 assets if not set
         _assign_default_tags(conn)
 
@@ -124,6 +138,25 @@ def _seed_hierarchy(conn):
             (1, 'Linha de Produção', 'Linha 3 - Esteiras transportadoras'),
             (2, 'Área de Bombas',    'Estações de bombeamento');
     """)
+
+
+def _seed_ativos_demo(conn):
+    """Insere ativos de demonstracao para o deploy no Streamlit Cloud."""
+    demo = [
+        ("MTR-001", "Motor WEG W22 - Compressor Principal",   "WEG",     15.0, 28.5, 380.0, "IP55", "ativo",      1, "Sala de Maquinas - Bloco A", -23.5505, -46.6333),
+        ("MTR-002", "Motor WEG W21 - Bombeamento",            "WEG",      3.0,  9.2, 220.0, "IP54", "ativo",      4, "Estacao de Bombeamento",     -23.5510, -46.6340),
+        ("MTR-003", "Motor ABB M3BP - Esteira Transportadora","ABB",     22.0, 41.0, 380.0, "IP55", "manutencao", 3, "Linha de Producao 3",        -23.5515, -46.6345),
+        ("MTR-004", "Motor Siemens 1LE1 - Ventilacao",        "Siemens",  5.5, 15.8, 220.0, "IP44", "ativo",      2, "Utilidades - Bloco B",       -23.5520, -46.6350),
+    ]
+    for codigo, descricao, fab, pot, corr, tens, ip, status, area_id, loc, lat, lon in demo:
+        tag = codigo
+        conn.execute(
+            """INSERT OR IGNORE INTO ativos
+               (codigo, descricao, fabricante, potencia_kw, corrente_nom, tensao_v,
+                ip_rating, status, tag, area_id, localizacao_descricao, latitude, longitude)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+            (codigo, descricao, fab, pot, corr, tens, ip, status, tag, area_id, loc, lat, lon)
+        )
 
 
 def _assign_default_tags(conn):
