@@ -1,3 +1,5 @@
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-abs--digital--twin.streamlit.app-FF4B4B?logo=streamlit&logoColor=white)](https://abs-digital-twin.streamlit.app)
+
 # `Digital Twin Assets: Visualizacao Operacional e RPA`
 
 > Digital Twin de ativos industriais com 5 paginas: navegacao hierarquica Planta-Area-Ativo, dashboard de sensores em tempo real, cadastro CRUD com exportacao, central de automacoes RPA e pipeline OCR de placas de motor. Sprint 2 do projeto Forzy, FIAP 2026.
