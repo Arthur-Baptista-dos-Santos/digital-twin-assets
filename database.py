@@ -13,9 +13,16 @@ from datetime import datetime
 DB_PATH = "/tmp/digital_twin_motores.db"
 
 
+_DB_READY = False
+
+
 @contextmanager
 def get_conn():
     """Context manager with rollback — identical to Sprint 1."""
+    global _DB_READY
+    if not _DB_READY:
+        _DB_READY = True
+        init_db()
     conn = sqlite3.connect(DB_PATH, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
@@ -114,6 +121,8 @@ SPRINT2_COLUMNS = [
 
 def init_db():
     """Initialize Sprint 1 base + Sprint 2 extensions."""
+    global _DB_READY
+    _DB_READY = True  # previne recursao em get_conn
     with get_conn() as conn:
         conn.executescript(SCHEMA_SPRINT1)
         conn.executescript(SCHEMA_SPRINT2)
