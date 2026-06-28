@@ -57,6 +57,17 @@ CREATE TABLE IF NOT EXISTS log_execucoes (
     executado_em TEXT DEFAULT (datetime('now','localtime'))
 );
 
+CREATE TABLE IF NOT EXISTS leituras (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    ativo_id    INTEGER REFERENCES ativos(id),
+    temperatura REAL,
+    vibration   REAL,
+    corrente    REAL,
+    tensao      REAL,
+    rpm         REAL,
+    coletado_em TEXT DEFAULT (datetime('now','localtime'))
+);
+
 CREATE TABLE IF NOT EXISTS historico_atualizacoes (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     codigo      TEXT,
@@ -118,9 +129,11 @@ def init_db():
         if conn.execute("SELECT COUNT(*) FROM plantas").fetchone()[0] == 0:
             _seed_hierarchy(conn)
 
-        # Seed demo ativos if empty
+        # Seed demo ativos e leituras se vazio
         if conn.execute("SELECT COUNT(*) FROM ativos").fetchone()[0] == 0:
             _seed_ativos_demo(conn)
+        if conn.execute("SELECT COUNT(*) FROM leituras").fetchone()[0] == 0:
+            _seed_leituras_demo(conn)
 
         # Auto-assign TAGs to existing Sprint 1 assets if not set
         _assign_default_tags(conn)
@@ -157,6 +170,28 @@ def _seed_ativos_demo(conn):
                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             (codigo, descricao, fab, pot, corr, tens, ip, status, tag, area_id, loc, lat, lon)
         )
+
+
+def _seed_leituras_demo(conn):
+    """Insere leituras de sensor simuladas para os ativos demo."""
+    import random, datetime as dt
+    ativos = conn.execute("SELECT id FROM ativos").fetchall()
+    now = dt.datetime.now()
+    for ativo in ativos:
+        aid = ativo[0]
+        for h in range(24, 0, -1):
+            ts = (now - dt.timedelta(hours=h)).strftime("%Y-%m-%d %H:%M:%S")
+            conn.execute(
+                """INSERT INTO leituras (ativo_id, temperatura, vibration, corrente, tensao, rpm, coletado_em)
+                   VALUES (?,?,?,?,?,?,?)""",
+                (aid,
+                 round(random.uniform(45, 75), 1),
+                 round(random.uniform(0.5, 3.5), 2),
+                 round(random.uniform(20, 35), 1),
+                 round(random.uniform(370, 390), 1),
+                 round(random.uniform(1700, 1780), 0),
+                 ts)
+            )
 
 
 def _assign_default_tags(conn):
